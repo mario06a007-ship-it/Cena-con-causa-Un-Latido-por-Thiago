@@ -1,0 +1,29 @@
+{
+  "name": "cena-thiago",
+  "version": "1.0.0",
+  "description": "Sistema de venta de boletos para la cena benéfica Un Latido por Thiago",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "deploy": "git push origin main"
+  },
+  "keywords": [
+    "cena",
+    "recaudación",
+    "fondos",
+    "thiago",
+    "benéfico",
+    "ticketing"
+  ],
+  "author": "Soto Engineering",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mario06a007-ship-it/cena-thiago.git"
+  },
+  "homepage": "https://mario06a007-ship-it.github.io/cena-thiago/",
+  "funding": {
+    "type": "donation",
+    "url": "https://mpago.la/32gk8zg"
+  }
+}
