@@ -77,8 +77,17 @@ cena-thiago/
 
 ## 💾 Almacenamiento de Datos
 
-Los datos de las compras se guardan en `localStorage` del navegador. Para cada compra se registra:
+### Opción 1: Notion (RECOMENDADO) 📊
+Los datos se guardan automáticamente en **Notion**, que permite:
+- Ver todos los datos en una tabla profesional
+- Filtrar y buscar compras
+- Exportar a CSV/PDF
+- Acceder desde cualquier dispositivo
 
+**Ver:** [NOTION_CONFIG.md](NOTION_CONFIG.md)
+
+### Opción 2: localStorage (Respaldo Local)
+Si no configuras Notion, los datos se guardan localmente en el navegador:
 - ID único (TICKET-timestamp-código)
 - Nombre completo
 - Email
@@ -88,6 +97,8 @@ Los datos de las compras se guardan en `localStorage` del navegador. Para cada c
 - Observaciones especiales
 - Timestamp (fecha y hora)
 - Total pagado
+
+**Nota:** localStorage se pierde si se limpia el caché del navegador
 
 ## 🔐 Información de Seguridad
 

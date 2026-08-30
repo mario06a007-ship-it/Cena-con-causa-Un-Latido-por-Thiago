@@ -3,257 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Compra tu boleto para la cena Un Latido por Thiago - Recaudación de fondos para la cirugía de corazón de Thiago Soto">
-    <title>Un Latido por Thiago - Cena con Causa</title>
+    <title>Un Latido por Thiago - Cena Exclusiva 16 de Octubre</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-brand">
-                <h1>💙 Un Latido por Thiago</h1>
-            </div>
-        </div>
-    </nav>
-
     <!-- Hero Section -->
     <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Cena con Causa</h2>
-                <p class="tagline">16 de octubre de 2026</p>
-                <p class="description">
-                    Una noche especial con más de 60 artistas en escena, rifas exclusivas y 
-                    la oportunidad de ayudar a alcanzar la meta para la cirugía de corazón 
-                    del pequeño Thiago Soto.
-                </p>
-                <div class="hero-highlight">
-                    <span class="price">$1,200</span>
-                    <p>Por boleto</p>
-                </div>
+        <div class="hero-content">
+            <div class="hero-left">
+                <div class="folio-number">FOLIO<br>2026</div>
+                <div class="heart-icon">💙</div>
+                <p class="hero-tagline">Cada boleto<br>cuenta.<br>Cada boleto<br>ayuda.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Formulario de Compra -->
-    <section class="purchase-form-section">
-        <div class="container">
-            <div class="form-wrapper">
-                <h3>Compra tu Boleto</h3>
-                <form id="purchaseForm" class="purchase-form">
-                    
-                    <div class="form-group">
-                        <label for="fullName">Nombre Completo *</label>
-                        <input type="text" id="fullName" name="fullName" required placeholder="Tu nombre">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" required placeholder="tu@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Teléfono / WhatsApp *</label>
-                            <input type="tel" id="phone" name="phone" required placeholder="(52) 9841234567">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="quantity">Cantidad de Boletos *</label>
-                            <select id="quantity" name="quantity" required>
-                                <option value="">Selecciona cantidad</option>
-                                <option value="1">1 boleto - $1,200</option>
-                                <option value="2">2 boletos - $2,400</option>
-                                <option value="3">3 boletos - $3,600</option>
-                                <option value="4">4 boletos - $4,800</option>
-                                <option value="5">5 boletos - $6,000</option>
-                                <option value="6">6 boletos - $7,200</option>
-                                <option value="8">8 boletos (mesa) - $9,600</option>
-                                <option value="10">10 boletos - $12,000</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="paymentMethod">Método de Pago *</label>
-                            <select id="paymentMethod" name="paymentMethod" required>
-                                <option value="">Selecciona método</option>
-                                <option value="mercadopago">Mercado Pago</option>
-                                <option value="transferencia">Transferencia Bancaria</option>
-                                <option value="efectivo">Efectivo (Playa del Carmen)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="observations">Observaciones / Notas Especiales</label>
-                        <textarea id="observations" name="observations" placeholder="¿Hay algo que debamos saber? (restricciones dietéticas, etc.)"></textarea>
-                    </div>
-
-                    <!-- Resumen de compra -->
-                    <div class="order-summary">
-                        <div class="summary-row">
-                            <span>Boletos</span>
-                            <span id="ticketCount">0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span id="subtotal">$0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Nota: IVA incluido en el precio</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>Total</span>
-                            <span id="totalPrice">$0</span>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Procesar Compra</button>
-                    <p class="form-disclaimer">
-                        * Campos obligatorios. Recibirás confirmación vía email y WhatsApp.
-                    </p>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Métodos de Pago -->
-    <section class="payment-methods-section">
-        <div class="container">
-            <h3>Métodos de Pago</h3>
             
-            <div class="payment-grid">
-                <!-- Mercado Pago -->
-                <div class="payment-method">
-                    <h4>💳 Mercado Pago</h4>
-                    <p>Pago seguro con tarjeta de crédito, débito o billetera digital</p>
-                    <a href="https://mpago.la/32gk8zg" target="_blank" class="payment-link">
-                        Ir a Mercado Pago →
-                    </a>
+            <div class="hero-center">
+                <h1 class="event-title">UN LATIDO<br>POR THIAGO</h1>
+                <p class="event-subtitle">CENA CON CAUSA 💙</p>
+                <div class="event-highlight">
+                    <p class="highlight-text">CENA EXCLUSIVA CON<br><span class="highlight-bold">CHEFS DE ALTA CATEGORÍA</span></p>
                 </div>
+            </div>
 
-                <!-- Transferencia Bancaria -->
-                <div class="payment-method">
-                    <h4>🏦 Transferencia Bancaria</h4>
-                    <p>Transferencia directa a la cuenta de Soto Engineering</p>
-                    <div class="bank-details">
-                        <p><strong>Banco:</strong> BBVA</p>
-                        <p><strong>Titular:</strong> Mario Alejandro Soto López</p>
-                        <p><strong>Cuenta:</strong> 151 170 8950</p>
-                        <p><strong>CLABE:</strong> 012 694 0151117089507</p>
-                        <p><strong>SWIFT:</strong> BCRMXMMMPY</p>
+            <div class="hero-right">
+                <div class="qr-section">
+                    <p class="qr-label">¡YA ESTÁS AQUÍ!<br>COMPRA TU BOLETO</p>
+                    <div class="qr-code-placeholder">
+                        <div style="font-size: 48px;">🎟️</div>
                     </div>
-                    <p class="note">⚠️ Importante: Envía comprobante de transferencia por WhatsApp al 52-9841234567</p>
-                </div>
-
-                <!-- Efectivo -->
-                <div class="payment-method">
-                    <h4>💵 Efectivo</h4>
-                    <p>Pago en efectivo en Playa del Carmen</p>
-                    <p>Contacta directamente para coordinar entrega de boletos</p>
-                    <div class="contact-info">
-                        <p>📱 WhatsApp: <a href="https://wa.me/5298412357470" target="_blank">52-9841-2357-470</a></p>
-                        <p>📧 Email: <a href="mailto:mrsolutionsts@gmail.com">mrsolutionsts@gmail.com</a></p>
+                    <div class="status-box">
+                        <p style="font-weight: bold; margin-bottom: 8px;">✨ EVENTO EXTRAORDINARIO</p>
+                        <p>🎭 Show mexicano espectacular</p>
+                        <p>🍽️ Chefs de la república</p>
+                        <p>🎁 Rifas increíbles</p>
+                        <p>🎤 Artistas, bailarines, cantantes</p>
+                        <p style="margin-top: 8px; font-weight: bold;">16 OCTUBRE 2026</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Información del Evento -->
-    <section class="event-info-section">
-        <div class="container">
-            <h3>Sobre el Evento</h3>
-            <div class="info-grid">
-                <div class="info-card">
-                    <h4>🎭 Show Artístico</h4>
-                    <p>Más de 60 artistas en escena con un show cultural de alta categoría</p>
-                </div>
-                <div class="info-card">
-                    <h4>🎁 Rifas Especiales</h4>
-                    <p>Premios exclusivos durante la cena para apoyar la causa</p>
-                </div>
-                <div class="info-card">
-                    <h4>❤️ Por una Causa</h4>
-                    <p>100% de los fondos recaudados van para la cirugía de Thiago</p>
-                </div>
-                <div class="info-card">
-                    <h4>📅 Fecha</h4>
-                    <p>16 de octubre de 2026</p>
-                </div>
+    <!-- Event Details Banner -->
+    <section class="banner-details">
+        <div class="detail-item">
+            <span class="icon">📅</span>
+            <span class="text"><strong>16 DE OCTUBRE 2026</strong><br>Evento exclusivo (sujeto a condiciones climáticas)</span>
+        </div>
+        <div class="detail-item">
+            <span class="icon">🎭</span>
+            <span class="text"><strong>SHOW ESPECTACULAR</strong><br>Artistas, bailarines y cantantes de categoría</span>
+        </div>
+        <div class="detail-item">
+            <span class="icon">💰</span>
+            <span class="text"><strong>$1,200 MXN</strong><br>Por boleto - 100% a la causa de Thiago</span>
+        </div>
+        <div class="detail-item">
+            <span class="icon">🔒</span>
+            <span class="text"><strong>PAGO SEGURO</strong><br>Mercado Pago, Transferencia o Efectivo</span>
+        </div>
+    </section>
+
+    <!-- Thiago Story Section -->
+    <section class="thiago-story">
+        <div class="story-left">
+            <div class="story-image-placeholder">
+                <div style="font-size: 80px;">💙</div>
+                <p>La historia de Thiago</p>
+            </div>
+        </div>
+        
+        <div class="story-right">
+            <h2>Hola, soy Thiago</h2>
+            <p class="story-text">
+                Tengo 2 años y nací con una cardiopatía congénita. Necesito una cirugía urgente que me permita seguir creciendo, jugando y sonriendo.
+            </p>
+            <p class="story-text">
+                <strong>Cada boleto que compras es un paso más hacia mi cirugía.</strong> Esta cena extraordinaria ha sido organizada por personas que creen en mí y en mi futuro.
+            </p>
+            <p class="story-text story-emphasis">
+                Gracias por ser parte de mi historia. 💙
+            </p>
+            <p class="story-thanks">¡Dios te bendiga!</p>
+        </div>
+    </section>
+
+    <!-- Event Highlights -->
+    <section class="event-highlights">
+        <h2>UNA NOCHE INOLVIDABLE</h2>
+        <div class="highlights-grid">
+            <div class="highlight-card">
+                <div class="highlight-icon">👨‍🍳</div>
+                <h3>Chefs de Categoría</h3>
+                <p>Los mejores chefs de la república se unen por Thiago en una noche gastronómica extraordinaria</p>
+            </div>
+            <div class="highlight-card">
+                <div class="highlight-icon">🎭</div>
+                <h3>Show Mexicano</h3>
+                <p>Artistas, bailarines y cantantes te llevarán en un viaje por la magia del espectáculo mexicano</p>
+            </div>
+            <div class="highlight-card">
+                <div class="highlight-icon">🎁</div>
+                <h3>Rifas Increíbles</h3>
+                <p>Artículos de alto valor en rifas durante la cena - cada boleto incluye participación</p>
+            </div>
+            <div class="highlight-card">
+                <div class="highlight-icon">🍽️</div>
+                <h3>Cena Exclusiva</h3>
+                <p>Una experiencia culinaria única diseñada especialmente para esta noble causa</p>
             </div>
         </div>
     </section>
 
-    <!-- Contador de Compras -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4 id="totalTickets">0</h4>
-                    <p>Boletos Vendidos</p>
+    <!-- Reservation Form -->
+    <section class="form-section">
+        <h2>RESERVA TU BOLETO</h2>
+        <form id="purchaseForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Nombre Completo *</label>
+                    <input type="text" id="fullName" required>
                 </div>
-                <div class="stat-card">
-                    <h4 id="totalRaised">$0</h4>
-                    <p>Recaudado</p>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required>
                 </div>
-                <div class="stat-card">
-                    <h4>100%</h4>
-                    <p>Para la Causa</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Teléfono *</label>
+                    <input type="tel" id="phone" required>
                 </div>
+                <div class="form-group">
+                    <label for="quantity">Cantidad de Boletos *</label>
+                    <select id="quantity" required>
+                        <option value="">Selecciona cantidad</option>
+                        <option value="1">1 Boleto</option>
+                        <option value="2">2 Boletos</option>
+                        <option value="3">3 Boletos</option>
+                        <option value="4">4 Boletos</option>
+                        <option value="5">5 Boletos</option>
+                        <option value="6">6 Boletos</option>
+                        <option value="7">7 Boletos</option>
+                        <option value="8">8 Boletos</option>
+                        <option value="9">9 Boletos</option>
+                        <option value="10">10 Boletos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="paymentMethod">Método de Pago *</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Selecciona método de pago</option>
+                        <option value="mercadopago">Mercado Pago</option>
+                        <option value="transferencia">Transferencia Bancaria</option>
+                        <option value="efectivo">Efectivo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="observations">Observaciones Especiales</label>
+                    <input type="text" id="observations" placeholder="Ej: Dieta especial, preferencias...">
+                </div>
+            </div>
+
+            <div class="form-group total">
+                <label>Total a Pagar:</label>
+                <span id="totalAmount" class="total-price">$0.00</span>
+            </div>
+
+            <button type="submit" class="btn-submit">RESERVAR BOLETO</button>
+            
+            <p class="form-disclaimer">
+                * Campos obligatorios. Recibirás confirmación vía email y WhatsApp.
+            </p>
+            <p class="form-info" id="notionStatus">
+                📊 Conectado a Make - Guardando en Notion automáticamente
+            </p>
+        </form>
+    </section>
+
+    <!-- Payment Methods -->
+    <section class="payment-methods">
+        <h2>FORMAS DE PAGO</h2>
+        
+        <div class="method">
+            <h3>💳 Mercado Pago</h3>
+            <p>Click en el link para pagar de forma segura:</p>
+            <a href="https://mpago.la/32gk8zg" target="_blank" class="btn-payment">Pagar con Mercado Pago</a>
+        </div>
+
+        <div class="method">
+            <h3>🏦 Transferencia Bancaria</h3>
+            <p><strong>Banco:</strong> BBVA</p>
+            <p><strong>Titular:</strong> Mario Alejandro Soto López</p>
+            <p><strong>Cuenta:</strong> 151 170 8950</p>
+            <p><strong>CLABE:</strong> 012 694 0151117089507</p>
+            <p><strong>SWIFT:</strong> BCRMXMMMPY</p>
+        </div>
+
+        <div class="method">
+            <h3>💵 Efectivo / Contacto Directo</h3>
+            <p>Coordina directamente para mayor información</p>
+            <div class="contact-info">
+                <p><strong>WhatsApp 1:</strong> <a href="https://wa.me/527711000973" target="_blank">+52 (771) 100-0973</a></p>
+                <p><strong>WhatsApp 2:</strong> <a href="https://wa.me/529848079958" target="_blank">+52 (984) 807-9958</a></p>
+                <p><strong>Email:</strong> <a href="mailto:karladm24@icloud.com">karladm24@icloud.com</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="stats">
+        <h2>PROGRESO DE RECAUDACIÓN</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Boletos Vendidos</span>
+                <span class="stat-value" id="ticketsSoldDisplay">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Recaudado</span>
+                <span class="stat-value" id="totalRaisedDisplay">$0</span>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <p>💙 Un Latido por Thiago - Recaudación de fondos para la cirugía del corazón</p>
-            <p class="footer-contact">Organizador: Soto Engineering | Playa del Carmen, QR</p>
-            <p class="copyright">© 2026 Un Latido por Thiago. Todos los derechos reservados.</p>
+        <p>💙 <strong>Un Latido por Thiago</strong> - 16 de octubre de 2026</p>
+        <p>Sujeto a condiciones climáticas</p>
+        <p style="margin-top: 15px; font-size: 14px;">Cada boleto vendido es un paso más cercano a la cirugía de Thiago</p>
+        <div class="social-links">
+            <a href="https://wa.me/527711000973" target="_blank">WhatsApp 1</a> • 
+            <a href="https://wa.me/529848079958" target="_blank">WhatsApp 2</a> • 
+            <a href="mailto:karladm24@icloud.com">Email</a>
         </div>
     </footer>
-
-    <!-- Modal de Confirmación -->
-    <div id="confirmationModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>✅ ¡Compra Registrada!</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmationMessage"></p>
-                <div class="confirmation-details" id="confirmationDetails"></div>
-                <div class="next-steps">
-                    <h4>Próximos Pasos:</h4>
-                    <ol>
-                        <li id="step1"></li>
-                        <li id="step2"></li>
-                        <li id="step3"></li>
-                    </ol>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Pago Pendiente -->
-    <div id="paymentModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Información de Pago</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body" id="paymentModalContent">
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closePaymentModal()">Cerrar</button>
-            </div>
-        </div>
-    </div>
 
     <script src="script.js"></script>
 </body>
