@@ -15,8 +15,8 @@ const CONFIG = {
     // Notion Database ID
     notionDatabaseId: '3cce989b21c380d38a0ce680ecd9976a',
     
-    // Make Webhook (configurar cuando esté listo)
-    makeWebhookUrl: '',
+    // Make Webhook - ✅ CONFIGURADO
+    makeWebhookUrl: 'https://hook.us2.make.com/o7ju03mwuhrccssw9bqwco12mgntc93l',
     
     // Evento
     eventDate: '16 de octubre de 2026',
