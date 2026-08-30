@@ -237,6 +237,14 @@ body {
     box-shadow: 0 15px 40px rgba(212, 20, 90, 0.2);
 }
 
+.story-video-container {
+    background: white;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(212, 20, 90, 0.2);
+    overflow: hidden;
+}
+
 .story-image-placeholder p {
     color: var(--accent);
     font-weight: bold;
