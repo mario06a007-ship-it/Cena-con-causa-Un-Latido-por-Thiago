@@ -539,8 +539,117 @@ body {
     text-decoration: underline;
 }
 
-/* === STATS === */
-.stats {
+/* === SPONSORS SECTION === */
+.sponsors-section {
+    background: white;
+    padding: 80px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.sponsors-section h2 {
+    text-align: center;
+    font-size: 42px;
+    color: var(--accent);
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+    font-weight: 900;
+}
+
+.sponsors-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 50px;
+    line-height: 1.6;
+}
+
+.sponsors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.sponsor-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, white 100%);
+    border: 2px solid var(--secondary);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.sponsor-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(212, 20, 90, 0.15);
+}
+
+.sponsor-logo-container {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.sponsor-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.sponsor-card h3 {
+    font-size: 20px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-weight: 900;
+}
+
+.sponsor-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.sponsor-role {
+    font-weight: 600;
+    color: var(--primary) !important;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--secondary);
+}
+
+.sponsors-message {
+    text-align: center;
+    font-size: 15px;
+    color: #666;
+    max-width: 600px;
+    margin: 30px auto 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff9e6 0%, #ffe8f0 100%);
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .sponsors-section {
+        padding: 50px 20px;
+    }
+
+    .sponsors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sponsors-section h2 {
+        font-size: 32px;
+    }
+}
     background: white;
     padding: 80px 20px;
     max-width: 1400px;
