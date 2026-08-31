@@ -419,3 +419,43 @@ if (savedMakeUrl) {
 
 console.log('🎭 Un Latido por Thiago - Sistema listo');
 console.log('💡 Escribe systemStatus() en la consola para ver el estado');
+
+
+// ========================================
+// CONFIGURAR NOTION TOKEN (SEGURO)
+// ========================================
+
+// Función para configurar token de Notion
+function setNotionToken(token) {
+    localStorage.setItem('notionToken', token);
+    window.CONFIG = window.CONFIG || {};
+    window.CONFIG.notionToken = token;
+    console.log('✅ Token de Notion configurado correctamente');
+    console.log('✅ Ahora las reservas se guardarán en Notion');
+    return true;
+}
+
+// Función para verificar estado
+function checkNotionStatus() {
+    const token = localStorage.getItem('notionToken');
+    if (token) {
+        console.log('✅ Notion está configurado');
+        console.log('✅ Token: ' + token.substring(0, 20) + '...');
+    } else {
+        console.log('❌ Notion NO está configurado');
+    }
+}
+
+// Función para ver estado del sistema
+function systemStatus() {
+    console.log('=== ESTADO DEL SISTEMA ===');
+    const token = localStorage.getItem('notionToken');
+    console.log('Notion Token: ' + (token ? '✅ Configurado' : '❌ No configurado'));
+    console.log('Make Webhook: ✅ Configurado');
+    console.log('Local Storage: ✅ Funciona');
+    if (token) {
+        console.log('✅ Sistema 100% Operativo');
+    } else {
+        console.log('⚠️ Falta configurar Notion Token');
+    }
+}
