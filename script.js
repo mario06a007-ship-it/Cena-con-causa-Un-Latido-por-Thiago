@@ -120,6 +120,11 @@ async function handleFormSubmit(event) {
     // Enviar a Make (si está configurado)
     if (CONFIG.makeWebhookUrl) {
         await sendToMake(formData);
+        
+        // Enviar a Notion directamente
+        if (CONFIG.notionToken) {
+            await sendToNotion(formData);
+        }
     }
     
     // Mostrar confirmación
@@ -232,6 +237,81 @@ async function sendToMake(data) {
         }
     } catch (error) {
         console.error('❌ Error en Make:', error);
+    }
+}
+
+// ========================================
+// ENVIAR A NOTION (Directo)
+// ========================================
+
+async function sendToNotion(data) {
+    if (!CONFIG.notionToken || !CONFIG.notionDatabaseId) {
+        console.warn('⚠️ Notion no configurado');
+        return;
+    }
+    
+    try {
+        const payload = {
+            parent: {
+                database_id: CONFIG.notionDatabaseId
+            },
+            properties: {
+                "Nombre": {
+                    title: [{ text: { content: data.fullName || "Sin nombre" } }]
+                },
+                "Email": {
+                    email: data.email || ""
+                },
+                "Teléfono": {
+                    phone_number: data.phone || ""
+                },
+                "Cantidad Boletos": {
+                    number: parseInt(data.quantity) || 0
+                },
+                "Total": {
+                    number: parseInt(data.total) || 0
+                },
+                "Método de Pago": {
+                    select: { name: data.paymentMethod || "No especificado" }
+                },
+                "Observaciones": {
+                    rich_text: [{ text: { content: data.observations || "" } }]
+                },
+                "Fecha": {
+                    date: { start: data.date || new Date().toISOString().split('T')[0] }
+                },
+                "Estado": {
+                    select: { name: "Pagado" }
+                },
+                "ID": {
+                    rich_text: [{ text: { content: data.id || "" } }]
+                }
+            }
+        };
+        
+        console.log('📤 Enviando a Notion:', payload);
+        
+        const response = await fetch('https://api.notion.com/v1/pages', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + CONFIG.notionToken,
+                'Notion-Version': '2022-06-28',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+            console.log('✅ Datos guardados en Notion correctamente');
+            return true;
+        } else {
+            const error = await response.json();
+            console.error('❌ Error al guardar en Notion:', response.status, error.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error en Notion:', error.message);
+        return false;
     }
 }
 
