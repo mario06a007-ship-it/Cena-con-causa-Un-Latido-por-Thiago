@@ -588,13 +588,15 @@ function actualizarDashboard() {
     const totalBoletos = reservas.reduce((sum, r) => sum + (parseInt(r.quantity) || 0), 0);
     const totalRecaudado = reservas.reduce((sum, r) => sum + (parseInt(r.total) || 0), 0);
     
-    // Actualizar números
-    document.getElementById('totalReservas').textContent = totalReservas;
-    document.getElementById('totalBoletos').textContent = totalBoletos;
-    document.getElementById('totalRecaudado').textContent = '$' + totalRecaudado.toLocaleString('es-MX');
-    
-    // Llenar tabla
+    // Actualizar números (solo si el dashboard existe en la página)
+    const elR = document.getElementById('totalReservas');
+    const elB = document.getElementById('totalBoletos');
+    const elT = document.getElementById('totalRecaudado');
     const tbody = document.getElementById('reservasTableBody');
+    if (!elR || !elB || !elT || !tbody) { return; }
+    elR.textContent = totalReservas;
+    elB.textContent = totalBoletos;
+    elT.textContent = '$' + totalRecaudado.toLocaleString('es-MX');
     tbody.innerHTML = '';
     
     reservas.forEach(r => {
@@ -657,30 +659,6 @@ function limpiarDatos() {
 document.addEventListener('DOMContentLoaded', function() {
     actualizarDashboard();
 });
-
-// Modificar la función original para también guardar localmente
-const originalFormSubmit = document.addEventListener ? true : false;
-
-// Interceptar el envío del formulario ANTES de hacer click
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    if (form) {
-        const originalOnsubmit = form.onsubmit;
-        form.onsubmit = async function(e) {
-            if (originalOnsubmit) {
-                const result = originalOnsubmit.call(this, e);
-                if (result === false) return false;
-            }
-            
-            // Después de guardar localmente
-            const formData = getFormData();
-            agregarReservaLocal(formData);
-            
-            return false;
-        };
-    }
-});
-
 
 // ========================================
 // SISTEMA DE BOLETOS CON QR TOKENIZADO
