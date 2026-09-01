@@ -127,6 +127,9 @@ async function handleFormSubmit(event) {
         }
     }
     
+    // Guardar en localStorage
+    agregarReservaLocal(formData);
+    
     // Mostrar confirmación
     showConfirmation(formData);
     
@@ -539,3 +542,134 @@ function systemStatus() {
         console.log('⚠️ Falta configurar Notion Token');
     }
 }
+
+
+// ========================================
+// SISTEMA DE DASHBOARD CON LOCALSTORAGE
+// ========================================
+
+// Cargar reservas del localStorage
+function cargarReservas() {
+    const reservas = localStorage.getItem('reservasCena');
+    return reservas ? JSON.parse(reservas) : [];
+}
+
+// Guardar reservas en localStorage
+function guardarReservasLocal(reservas) {
+    localStorage.setItem('reservasCena', JSON.stringify(reservas));
+    actualizarDashboard();
+}
+
+// Agregar reserva al localStorage
+function agregarReservaLocal(datos) {
+    const reservas = cargarReservas();
+    reservas.push({
+        ...datos,
+        timestamp: new Date().toISOString(),
+        id: 'RES-' + Date.now()
+    });
+    guardarReservasLocal(reservas);
+    console.log('✅ Reserva guardada localmente');
+}
+
+// Actualizar dashboard
+function actualizarDashboard() {
+    const reservas = cargarReservas();
+    
+    // Calcular totales
+    const totalReservas = reservas.length;
+    const totalBoletos = reservas.reduce((sum, r) => sum + (parseInt(r.quantity) || 0), 0);
+    const totalRecaudado = reservas.reduce((sum, r) => sum + (parseInt(r.total) || 0), 0);
+    
+    // Actualizar números
+    document.getElementById('totalReservas').textContent = totalReservas;
+    document.getElementById('totalBoletos').textContent = totalBoletos;
+    document.getElementById('totalRecaudado').textContent = '$' + totalRecaudado.toLocaleString('es-MX');
+    
+    // Llenar tabla
+    const tbody = document.getElementById('reservasTableBody');
+    tbody.innerHTML = '';
+    
+    reservas.forEach(r => {
+        const fecha = new Date(r.timestamp).toLocaleDateString('es-MX');
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">${r.fullName}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">${r.email}</td>
+            <td style="text-align: center; padding: 10px; border-bottom: 1px solid #eee;">${r.quantity}</td>
+            <td style="text-align: center; padding: 10px; border-bottom: 1px solid #eee;">$${r.total}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">${fecha}</td>
+        `;
+    });
+    
+    // Mostrar dashboard si hay reservas
+    const dashboard = document.getElementById('dashboardSection');
+    if (dashboard) {
+        dashboard.style.display = totalReservas > 0 ? 'block' : 'none';
+    }
+}
+
+// Exportar a CSV
+function exportarCSV() {
+    const reservas = cargarReservas();
+    
+    if (reservas.length === 0) {
+        alert('No hay reservas para exportar');
+        return;
+    }
+    
+    let csv = 'ID,Nombre,Email,Teléfono,Boletos,Total,Método de Pago,Fecha\n';
+    
+    reservas.forEach(r => {
+        const fecha = new Date(r.timestamp).toLocaleDateString('es-MX');
+        csv += `${r.id},"${r.fullName}","${r.email}","${r.phone}",${r.quantity},${r.total},"${r.paymentMethod}","${fecha}"\n`;
+    });
+    
+    // Descargar archivo
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'reservas-cena-thiago-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    
+    console.log('✅ CSV exportado');
+}
+
+// Limpiar datos
+function limpiarDatos() {
+    if (confirm('¿Estás seguro de que quieres eliminar TODAS las reservas? Esta acción no se puede deshacer.')) {
+        localStorage.removeItem('reservasCena');
+        actualizarDashboard();
+        console.log('✅ Datos limpios');
+        alert('Todas las reservas han sido eliminadas');
+    }
+}
+
+// Actualizar dashboard cuando carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarDashboard();
+});
+
+// Modificar la función original para también guardar localmente
+const originalFormSubmit = document.addEventListener ? true : false;
+
+// Interceptar el envío del formulario ANTES de hacer click
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        const originalOnsubmit = form.onsubmit;
+        form.onsubmit = async function(e) {
+            if (originalOnsubmit) {
+                const result = originalOnsubmit.call(this, e);
+                if (result === false) return false;
+            }
+            
+            // Después de guardar localmente
+            const formData = getFormData();
+            agregarReservaLocal(formData);
+            
+            return false;
+        };
+    }
+});
