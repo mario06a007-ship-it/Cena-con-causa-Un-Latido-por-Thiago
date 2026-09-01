@@ -563,13 +563,20 @@ function guardarReservasLocal(reservas) {
 // Agregar reserva al localStorage
 function agregarReservaLocal(datos) {
     const reservas = cargarReservas();
-    reservas.push({
+    const nuevaReserva = {
         ...datos,
         timestamp: new Date().toISOString(),
         id: 'RES-' + Date.now()
-    });
+    };
+    reservas.push(nuevaReserva);
     guardarReservasLocal(reservas);
+    
+    // Crear boletos con QR automáticamente
+    const boletos = crearBoletosDesdeReserva(nuevaReserva);
+    guardarBoletosEnLocal(boletos);
+    
     console.log('✅ Reserva guardada localmente');
+    console.log('✅ ' + boletos.length + ' boletos con QR creados');
 }
 
 // Actualizar dashboard
@@ -673,3 +680,130 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 });
+
+
+// ========================================
+// SISTEMA DE BOLETOS CON QR TOKENIZADO
+// ========================================
+
+// Generar token único para cada boleto
+function generarTokenUnico() {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substr(2, 9).toUpperCase();
+    return 'TKN-' + timestamp + '-' + random;
+}
+
+// Crear boletos con tokens para una reserva
+function crearBoletosDesdeReserva(reserva) {
+    const boletos = [];
+    const cantidad = parseInt(reserva.quantity) || 1;
+    
+    for (let i = 1; i <= cantidad; i++) {
+        boletos.push({
+            id: reserva.id + '-' + i,
+            token: generarTokenUnico(),
+            nombre: reserva.fullName,
+            email: reserva.email,
+            boleto_numero: i,
+            reserva_id: reserva.id,
+            estado: 'Pagado',
+            acceso_evento: false,
+            fecha_acceso: null,
+            fecha_creacion: new Date().toISOString()
+        });
+    }
+    
+    return boletos;
+}
+
+// Guardar boletos en localStorage
+function guardarBoletosEnLocal(boletos) {
+    try {
+        const existentes = localStorage.getItem('boletosEventoCena');
+        const todos = existentes ? JSON.parse(existentes) : [];
+        todos.push(...boletos);
+        localStorage.setItem('boletosEventoCena', JSON.stringify(todos));
+        console.log('✅ ' + boletos.length + ' boletos guardados');
+        return true;
+    } catch(e) {
+        console.error('Error guardando boletos:', e);
+        return false;
+    }
+}
+
+// Cargar boletos
+function cargarBoletosDelEvento() {
+    try {
+        const boletos = localStorage.getItem('boletosEventoCena');
+        return boletos ? JSON.parse(boletos) : [];
+    } catch(e) {
+        console.error('Error cargando boletos:', e);
+        return [];
+    }
+}
+
+// Verificar token en el evento
+function verificarTokenEnEvento(token) {
+    const boletos = cargarBoletosDelEvento();
+    const boleto = boletos.find(b => b.token === token);
+    
+    if (!boleto) {
+        return { valido: false, mensaje: 'Token no encontrado' };
+    }
+    
+    if (boleto.acceso_evento) {
+        return { valido: false, mensaje: 'Este boleto ya fue usado', boleto: boleto };
+    }
+    
+    return { valido: true, mensaje: 'Acceso PERMITIDO', boleto: boleto };
+}
+
+// Marcar boleto como usado en el evento
+function registrarAccesoAlEvento(token) {
+    try {
+        const boletos = cargarBoletosDelEvento();
+        const boleto = boletos.find(b => b.token === token);
+        
+        if (boleto) {
+            boleto.acceso_evento = true;
+            boleto.fecha_acceso = new Date().toISOString();
+            localStorage.setItem('boletosEventoCena', JSON.stringify(boletos));
+            console.log('✅ Acceso registrado para:', boleto.nombre);
+            return true;
+        }
+        return false;
+    } catch(e) {
+        console.error('Error registrando acceso:', e);
+        return false;
+    }
+}
+
+// Ver todos los boletos generados
+function verTodosLosBoletos() {
+    const boletos = cargarBoletosDelEvento();
+    console.log('📋 Total de boletos: ' + boletos.length);
+    console.table(boletos);
+    return boletos;
+}
+
+// Exportar boletos a JSON
+function exportarBoletosAJSON() {
+    const boletos = cargarBoletosDelEvento();
+    
+    if (boletos.length === 0) {
+        alert('No hay boletos para exportar');
+        return;
+    }
+    
+    const json = JSON.stringify(boletos, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'boletos-qr-' + new Date().toISOString().split('T')[0] + '.json';
+    link.click();
+    
+    console.log('✅ Boletos exportados a JSON');
+}
+
+console.log('✅ Sistema de QR Tokenizado cargado correctamente');
