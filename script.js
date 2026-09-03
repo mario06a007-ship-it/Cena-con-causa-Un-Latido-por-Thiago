@@ -19,7 +19,7 @@ const CONFIG = {
     makeWebhookUrl: 'https://hook.us2.make.com/52ld0gg2as6i3l36bxsvn2jjt1vpqpe6',
     
     // Evento
-    eventDate: '16 de octubre de 2026',
+    eventDate: '23 de octubre de 2026, 7:00 PM',
     eventName: 'Un Latido por Thiago',
     
     // Métodos de pago
