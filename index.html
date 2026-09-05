@@ -174,9 +174,19 @@
                 </div>
             </div>
 
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="promoCode">Código Promocional (opcional)</label>
+                    <input type="text" id="promoCode" placeholder="Si tienes un código, escríbelo aquí"
+                           autocomplete="off" style="text-transform:uppercase;">
+                    <p id="promoMsg" style="margin-top:8px; font-size:.9em; display:none;"></p>
+                </div>
+            </div>
+
             <div class="form-group total">
                 <label>Total a Pagar:</label>
                 <span id="totalAmount" class="total-price">$0.00</span>
+                <p id="promoDetalle" style="display:none; font-size:.85em; margin-top:6px; opacity:.85;"></p>
             </div>
 
             <button type="submit" class="btn-submit">RESERVAR BOLETO</button>

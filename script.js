@@ -76,7 +76,9 @@ function setupFormListeners() {
     }
     
     if (quantitySelect) {
-        quantitySelect.addEventListener('change', updateTotal);
+        quantitySelect.addEventListener('change', function() {
+            if (typeof evaluarPromo === 'function') { evaluarPromo(); } else { updateTotal(); }
+        });
     }
 }
 
@@ -85,14 +87,32 @@ function setupFormListeners() {
 // ========================================
 
 function updateTotal() {
-    const quantity = document.getElementById('quantity').value;
+    const quantity = parseInt(document.getElementById('quantity').value) || 0;
     const totalAmount = document.getElementById('totalAmount');
-    
-    if (quantity && quantity > 0) {
-        const total = quantity * CONFIG.ticketPrice;
-        totalAmount.textContent = `$${total.toLocaleString('es-MX')} ${CONFIG.currency}`;
-    } else {
+    const detalle = document.getElementById('promoDetalle');
+
+    if (!quantity) {
         totalAmount.textContent = '$0.00';
+        if (detalle) detalle.style.display = 'none';
+        return;
+    }
+
+    const t = (typeof calcularTotales === 'function')
+        ? calcularTotales(quantity)
+        : { bruto: quantity * CONFIG.ticketPrice, descuento: 0, neto: quantity * CONFIG.ticketPrice };
+
+    totalAmount.textContent = `$${t.neto.toLocaleString('es-MX')} ${CONFIG.currency}`;
+
+    if (detalle) {
+        if (t.descuento > 0) {
+            detalle.style.display = 'block';
+            detalle.innerHTML = `<s>$${t.bruto.toLocaleString('es-MX')}</s> &nbsp;·&nbsp; `
+                + (promoActivo && promoActivo.tipo === 'cortesia'
+                    ? `Cortesía de ${promoActivo.otorga}`
+                    : `Ahorras $${t.descuento.toLocaleString('es-MX')}`);
+        } else {
+            detalle.style.display = 'none';
+        }
     }
 }
 
@@ -167,7 +187,12 @@ function getFormData() {
         quantity: parseInt(document.getElementById('quantity').value),
         paymentMethod: document.getElementById('paymentMethod').value,
         observations: document.getElementById('observations').value.trim(),
-        total: parseInt(document.getElementById('quantity').value) * CONFIG.ticketPrice,
+        total: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).neto,
+        totalOriginal: (parseInt(document.getElementById('quantity').value) || 0) * CONFIG.ticketPrice,
+        descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
+        promoCodigo: promoActivo ? promoActivo.codigo : '',
+        promoTipo: promoActivo ? (promoActivo.tipo === 'cortesia' ? 'Cortesia' : 'Descuento de grupo') : 'Sin codigo',
+        promoOtorga: promoActivo ? promoActivo.otorga : '',
         date: new Date().toISOString(),
         dateFormatted: new Date().toLocaleDateString('es-MX'),
         status: 'Pendiente'
@@ -785,3 +810,120 @@ function exportarBoletosAJSON() {
 }
 
 console.log('✅ Sistema de QR Tokenizado cargado correctamente');
+
+
+// ========================================
+// CODIGOS PROMOCIONALES
+// ========================================
+// Los codigos no se guardan en claro: solo su huella.
+// Aunque alguien lea este archivo, no puede deducir el codigo.
+// La cortesia siempre queda sujeta a tu aprobacion en Notion.
+
+const PROMO = {
+    "0cbfb302": {
+        "tipo": "cortesia",
+        "otorga": "Maestra Cristal",
+        "desc": 100,
+        "min": 1
+    },
+    "b0536e37": {
+        "tipo": "cortesia",
+        "otorga": "Maestra Consuelo",
+        "desc": 100,
+        "min": 1
+    },
+    "28a4a749": {
+        "tipo": "cortesia",
+        "otorga": "Emma Franco",
+        "desc": 100,
+        "min": 1
+    },
+    "e554cf28": {
+        "tipo": "cortesia",
+        "otorga": "Alexander Pina",
+        "desc": 100,
+        "min": 1
+    },
+    "c448ed47": {
+        "tipo": "cortesia",
+        "otorga": "Thiago Soto",
+        "desc": 100,
+        "min": 1
+    },
+    "a235c0a5": {
+        "tipo": "grupo",
+        "otorga": "Descuento de grupo",
+        "desc": 15,
+        "min": 5
+    }
+};
+
+function huellaCodigo(s) {
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) {
+        h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+    }
+    return h.toString(16).padStart(8, '0');
+}
+
+// Estado del codigo aplicado en este momento
+let promoActivo = null;
+
+function evaluarPromo() {
+    const campo = document.getElementById('promoCode');
+    const msg = document.getElementById('promoMsg');
+    if (!campo || !msg) return;
+
+    const codigo = campo.value.trim().toUpperCase();
+    promoActivo = null;
+
+    if (!codigo) {
+        msg.style.display = 'none';
+        updateTotal();
+        return;
+    }
+
+    const encontrado = PROMO[huellaCodigo(codigo)];
+    msg.style.display = 'block';
+
+    if (!encontrado) {
+        msg.style.color = '#ff8a8a';
+        msg.textContent = 'Ese código no es válido. Revísalo o déjalo vacío.';
+        updateTotal();
+        return;
+    }
+
+    const cantidad = parseInt(document.getElementById('quantity').value) || 0;
+
+    if (cantidad && cantidad < encontrado.min) {
+        msg.style.color = '#ffcc66';
+        msg.textContent = 'Este código aplica desde ' + encontrado.min + ' boletos.';
+        updateTotal();
+        return;
+    }
+
+    promoActivo = { codigo: codigo, ...encontrado };
+    msg.style.color = '#7ee08a';
+    msg.textContent = encontrado.tipo === 'cortesia'
+        ? 'Cortesía de ' + encontrado.otorga + '. Queda sujeta a confirmación.'
+        : 'Descuento de grupo aplicado: ' + encontrado.desc + '% menos.';
+    updateTotal();
+}
+
+function calcularTotales(cantidad) {
+    const bruto = cantidad * CONFIG.ticketPrice;
+    if (!promoActivo || cantidad < promoActivo.min) {
+        return { bruto: bruto, descuento: 0, neto: bruto };
+    }
+    const descuento = Math.round(bruto * promoActivo.desc / 100);
+    return { bruto: bruto, descuento: descuento, neto: bruto - descuento };
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const campoPromo = document.getElementById('promoCode');
+    if (campoPromo) {
+        campoPromo.addEventListener('input', evaluarPromo);
+        campoPromo.addEventListener('blur', evaluarPromo);
+    }
+});
