@@ -192,7 +192,7 @@ function getFormData() {
         descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
         promoCodigo: promoActivo ? promoActivo.codigo : '',
         promoTipo: promoActivo ? (promoActivo.tipo === 'cortesia' ? 'Cortesia' : 'Descuento de grupo') : 'Sin codigo',
-        promoOtorga: promoActivo ? promoActivo.otorga : '',
+        promoOtorga: (promoActivo && promoActivo.tipo === 'cortesia') ? promoActivo.otorga : '',
         date: new Date().toISOString(),
         dateFormatted: new Date().toLocaleDateString('es-MX'),
         status: 'Pendiente'
