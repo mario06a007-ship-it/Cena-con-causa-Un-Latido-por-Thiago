@@ -4,7 +4,7 @@
 
 const CONFIG = {
     // Precios
-    ticketPrice: 1200,
+    ticketPrice: 900,
     currency: 'MXN',
     
     // Contacto
@@ -370,8 +370,10 @@ Método de Pago: ${getPaymentMethodName(data.paymentMethod)}
 
 function getPaymentMethodName(method) {
     const methods = {
+        'tarjeta': 'Tarjeta de crédito o débito',
         'mercadopago': 'Mercado Pago',
-        'transferencia': 'Transferencia Bancaria',
+        'transferencia': 'Transferencia bancaria',
+        'deposito': 'Depósito bancario',
         'efectivo': 'Efectivo'
     };
     return methods[method] || method;

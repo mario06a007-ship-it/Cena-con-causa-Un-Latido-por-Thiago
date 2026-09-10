@@ -67,7 +67,7 @@
         </div>
         <div class="detail-item">
             <span class="icon">💰</span>
-            <span class="text"><strong>$1,200 MXN</strong><br>Por boleto - 100% a la causa de Thiago</span>
+            <span class="text"><strong>$900 MXN</strong><br>Por persona - 100% a la causa de Thiago</span>
         </div>
         <div class="detail-item">
             <span class="icon">🔒</span>
@@ -175,8 +175,10 @@
                     <label for="paymentMethod">Método de Pago *</label>
                     <select id="paymentMethod" required>
                         <option value="">Selecciona método de pago</option>
+                        <option value="tarjeta">Tarjeta de crédito o débito</option>
                         <option value="mercadopago">Mercado Pago</option>
-                        <option value="transferencia">Transferencia Bancaria</option>
+                        <option value="transferencia">Transferencia bancaria</option>
+                        <option value="deposito">Depósito bancario</option>
                         <option value="efectivo">Efectivo</option>
                     </select>
                 </div>
@@ -217,13 +219,21 @@
         <h2>FORMAS DE PAGO</h2>
         
         <div class="method">
-            <h3>💳 Mercado Pago</h3>
-            <p>Click en el link para pagar de forma segura:</p>
+            <h3>💳 Tarjeta de crédito o débito</h3>
+            <p>Aceptamos Visa, Mastercard y American Express. El cobro se procesa
+               de forma segura a través de Mercado Pago, con opción a meses sin intereses
+               según tu banco.</p>
+            <a href="https://mpago.la/32gk8zg" target="_blank" class="btn-payment">Pagar con tarjeta</a>
+        </div>
+
+        <div class="method">
+            <h3>📱 Mercado Pago</h3>
+            <p>Paga desde tu saldo de Mercado Pago o con tu cuenta ligada:</p>
             <a href="https://mpago.la/32gk8zg" target="_blank" class="btn-payment">Pagar con Mercado Pago</a>
         </div>
 
         <div class="method">
-            <h3>🏦 Transferencia Bancaria</h3>
+            <h3>🏦 Transferencia o depósito bancario</h3>
             <p><strong>Banco:</strong> BBVA</p>
             <p><strong>Titular:</strong> Mario Alejandro Soto López</p>
             <p><strong>Cuenta:</strong> 151 170 8950</p>
