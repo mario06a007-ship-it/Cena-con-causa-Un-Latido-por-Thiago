@@ -947,3 +947,19 @@ document.addEventListener('DOMContentLoaded', function() {
         campoPromo.addEventListener('blur', evaluarPromo);
     }
 });
+
+
+// ========================================
+// CUENTA REGRESIVA (urgencia)
+// ========================================
+function actualizarCuentaRegresiva() {
+    const el = document.getElementById('diasRestantes');
+    if (!el) return;
+    const evento = new Date('2026-10-23T19:00:00-05:00');
+    const dias = Math.ceil((evento - new Date()) / 86400000);
+    if (dias > 1)       el.textContent = 'Faltan ' + dias + ' días';
+    else if (dias === 1) el.textContent = '¡Mañana es el evento!';
+    else if (dias === 0) el.textContent = '¡Hoy es la noche!';
+    else                 el.textContent = '';
+}
+document.addEventListener('DOMContentLoaded', actualizarCuentaRegresiva);

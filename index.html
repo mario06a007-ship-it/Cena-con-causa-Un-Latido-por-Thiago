@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div style="background:linear-gradient(90deg,#96123c,#d4145a,#96123c); color:#fff;
+            text-align:center; padding:10px 14px; font-weight:bold; letter-spacing:.5px;
+            font-size:.95em; position:sticky; top:0; z-index:999;">
+    Cupo limitado · Solo 200 lugares · <span id="diasRestantes"></span>
+</div>
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
@@ -137,7 +142,7 @@
     </section>
 
     <!-- Reservation Form -->
-    <section class="form-section">
+    <section class="form-section" id="reservar">
         <h2>RESERVA TU BOLETO</h2>
         <form id="purchaseForm">
             <div class="form-row">
@@ -268,6 +273,28 @@
     </section>
 
     <!-- Sponsors Section -->
+<section style="padding:60px 20px; background:linear-gradient(180deg,#12121f,#1a1a2e);">
+    <h2 style="text-align:center; color:#ffd700; margin-bottom:12px;">Una noche de gala mexicana</h2>
+    <p style="text-align:center; opacity:.8; max-width:640px; margin:0 auto 34px;">
+        Cena de cuatro tiempos por Kóoben México, danza folclórica de Academia Amate
+        y la voz de Emma Franco. Todo en una sola noche, por Thiago.
+    </p>
+    <div style="display:flex; gap:18px; justify-content:center; flex-wrap:wrap; max-width:1100px; margin:0 auto;">
+        <img src="poster-latido-gala.jpg" alt="Un Latido por Thiago - Cena Show"
+             style="width:320px; max-width:90vw; border-radius:14px; border:2px solid rgba(255,215,0,.45); box-shadow:0 10px 40px rgba(0,0,0,.55);">
+        <img src="poster-kooben-amate.jpg" alt="Kóoben México y Academia Amate"
+             style="width:320px; max-width:90vw; border-radius:14px; border:2px solid rgba(255,215,0,.45); box-shadow:0 10px 40px rgba(0,0,0,.55);">
+        <img src="poster-emma-franco.jpg" alt="Emma Franco"
+             style="width:320px; max-width:90vw; border-radius:14px; border:2px solid rgba(255,215,0,.45); box-shadow:0 10px 40px rgba(0,0,0,.55);">
+    </div>
+    <div style="text-align:center; margin-top:36px;">
+        <a href="#reservar" style="display:inline-block; background:linear-gradient(90deg,#e9a63c,#ffd700);
+           color:#16162a; font-weight:bold; padding:16px 44px; border-radius:40px;
+           text-decoration:none; font-size:1.1em;">Reservar mi lugar</a>
+        <p style="margin-top:14px; opacity:.7; font-size:.9em;">$900 por persona · Grupos de 5 o más: descuento especial</p>
+    </div>
+</section>
+
     <section class="sponsors-section">
         <h2>PATROCINADORES Y ORGANIZADORES</h2>
         <p class="sponsors-subtitle">Gracias a estos extraordinarios aliados por creer en la causa de Thiago 💙</p>
