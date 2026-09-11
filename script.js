@@ -107,9 +107,9 @@ function updateTotal() {
         if (t.descuento > 0) {
             detalle.style.display = 'block';
             detalle.innerHTML = `<s>$${t.bruto.toLocaleString('es-MX')}</s> &nbsp;·&nbsp; `
-                + (promoActivo && promoActivo.tipo === 'cortesia'
+                + (t.motivo === 'cortesia'
                     ? `Cortesía de ${promoActivo.otorga}`
-                    : `Ahorras $${t.descuento.toLocaleString('es-MX')}`);
+                    : `Descuento de grupo aplicado · Ahorras $${t.descuento.toLocaleString('es-MX')}`);
         } else {
             detalle.style.display = 'none';
         }
@@ -191,7 +191,13 @@ function getFormData() {
         totalOriginal: (parseInt(document.getElementById('quantity').value) || 0) * CONFIG.ticketPrice,
         descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
         promoCodigo: promoActivo ? promoActivo.codigo : '',
-        promoTipo: promoActivo ? (promoActivo.tipo === 'cortesia' ? 'Cortesia' : 'Descuento de grupo') : 'Sin codigo',
+        promoTipo: (function() {
+            const c = parseInt(document.getElementById('quantity').value) || 0;
+            const t = calcularTotales(c);
+            if (t.motivo === 'cortesia') return 'Cortesia';
+            if (t.motivo === 'grupo') return 'Descuento de grupo';
+            return 'Sin codigo';
+        })(),
         promoOtorga: (promoActivo && promoActivo.tipo === 'cortesia') ? promoActivo.otorga : '',
         date: new Date().toISOString(),
         dateFormatted: new Date().toLocaleDateString('es-MX'),
@@ -912,13 +918,25 @@ function evaluarPromo() {
     updateTotal();
 }
 
+const GRUPO_MINIMO = 5;      // a partir de cuantos boletos aplica
+const GRUPO_PORCENTAJE = 15; // cuanto se descuenta
+
 function calcularTotales(cantidad) {
     const bruto = cantidad * CONFIG.ticketPrice;
-    if (!promoActivo || cantidad < promoActivo.min) {
-        return { bruto: bruto, descuento: 0, neto: bruto };
+
+    // 1. Una cortesia manda sobre todo lo demas
+    if (promoActivo && promoActivo.tipo === 'cortesia' && cantidad >= promoActivo.min) {
+        const d = Math.round(bruto * promoActivo.desc / 100);
+        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'cortesia' };
     }
-    const descuento = Math.round(bruto * promoActivo.desc / 100);
-    return { bruto: bruto, descuento: descuento, neto: bruto - descuento };
+
+    // 2. Descuento de grupo: automatico, sin necesidad de codigo
+    if (cantidad >= GRUPO_MINIMO) {
+        const d = Math.round(bruto * GRUPO_PORCENTAJE / 100);
+        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'grupo' };
+    }
+
+    return { bruto: bruto, descuento: 0, neto: bruto, motivo: null };
 }
 
 
