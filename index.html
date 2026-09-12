@@ -137,7 +137,7 @@
     </section>
 
     <!-- Reservation Form -->
-    <section class="form-section">
+    <section class="form-section" id="reservar">
         <h2>RESERVA TU BOLETO</h2>
         <form id="purchaseForm">
             <div class="form-row">
@@ -234,17 +234,16 @@
         <h2>FORMAS DE PAGO</h2>
         
         <div class="method">
-            <h3>💳 Tarjeta de crédito o débito</h3>
-            <p>Aceptamos Visa, Mastercard y American Express. El cobro se procesa
-               de forma segura a través de Mercado Pago, con opción a meses sin intereses
-               según tu banco.</p>
-            <a href="https://mpago.la/32gk8zg" target="_blank" class="btn-payment">Pagar con tarjeta</a>
-        </div>
-
-        <div class="method">
-            <h3>📱 Mercado Pago</h3>
-            <p>Paga desde tu saldo de Mercado Pago o con tu cuenta ligada:</p>
-            <a href="https://mpago.la/32gk8zg" target="_blank" class="btn-payment">Pagar con Mercado Pago</a>
+            <h3>💳 Tarjeta, débito o Mercado Pago</h3>
+            <p>Aceptamos Visa, Mastercard y American Express, saldo de Mercado Pago
+               y transferencia. El cobro se procesa de forma segura.</p>
+            <p style="background:rgba(212,20,90,.18); border-left:4px solid #d4145a;
+                      padding:12px 14px; border-radius:8px; margin:14px 0; font-size:.95em;">
+               <strong>Importante:</strong> primero llena el formulario de reserva.
+               Al terminar te mostramos el monto exacto que debes escribir en Mercado Pago.
+               Si escribes otra cantidad, tu pago no coincidirá con tu reserva.
+            </p>
+            <a href="#reservar" class="btn-payment">Reservar y pagar</a>
         </div>
 
         <div class="method">

@@ -354,24 +354,83 @@ async function sendToNotion(data) {
 // ========================================
 
 function showConfirmation(data) {
-    const message = `
+    const digital = (data.paymentMethod === 'tarjeta' || data.paymentMethod === 'mercadopago');
+
+    if (digital && data.total > 0) {
+        mostrarPantallaPago(data);
+    } else {
+        alert(`
 🎉 ¡RESERVA CONFIRMADA! 🎉
 
 Nombre: ${data.fullName}
 Boletos: ${data.quantity}
 Total: $${data.total.toLocaleString('es-MX')} MXN
 Método de Pago: ${getPaymentMethodName(data.paymentMethod)}
+Folio: ${data.id}
 
-📧 Confirmación enviada a tu correo
 💬 Te contactaremos por WhatsApp
 
 ¡Gracias por ser parte de Un Latido por Thiago! 💙
-    `;
-    
-    alert(message);
-    
-    // Enviar WhatsApp automático
+        `);
+    }
+
     sendWhatsAppNotification(data);
+}
+
+// Pantalla que evita que tecleen mal el monto en Mercado Pago
+function mostrarPantallaPago(data) {
+    const monto = data.total;
+    const capa = document.createElement('div');
+    capa.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;'
+        + 'display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto;';
+
+    capa.innerHTML = `
+      <div style="background:#1a1a2e;border:2px solid #ffd700;border-radius:16px;max-width:440px;
+                  width:100%;padding:26px 22px;color:#fff;text-align:center;font-family:inherit;">
+        <h2 style="color:#ffd700;margin:0 0 6px;font-size:1.35em;">Reserva registrada</h2>
+        <p style="margin:0 0 4px;opacity:.85;">${data.fullName} · ${data.quantity} boleto(s)</p>
+        <p style="margin:0 0 18px;opacity:.6;font-size:.85em;">Folio ${data.id}</p>
+
+        <div style="background:rgba(255,215,0,.1);border:1px dashed #ffd700;border-radius:12px;padding:16px;">
+          <p style="margin:0 0 6px;font-size:.9em;">En Mercado Pago escribe exactamente:</p>
+          <p style="margin:0;font-size:2.5em;font-weight:bold;color:#ffd700;line-height:1;">
+            $${monto.toLocaleString('es-MX')}
+          </p>
+          <button id="copiarMonto" style="margin-top:12px;padding:9px 20px;border:none;border-radius:20px;
+                  background:#ffd700;color:#16162a;font-weight:bold;cursor:pointer;">
+            Copiar monto
+          </button>
+        </div>
+
+        <p style="margin:16px 0 4px;font-size:.85em;opacity:.75;">
+          Si escribes otra cantidad, tu pago no coincidirá con tu reserva
+          y tendremos que contactarte para corregirlo.
+        </p>
+
+        <a href="${CONFIG.mercadoPagoLink}" target="_blank" rel="noopener"
+           style="display:block;margin-top:16px;padding:15px;border-radius:30px;text-decoration:none;
+                  background:linear-gradient(90deg,#e9a63c,#ffd700);color:#16162a;font-weight:bold;font-size:1.05em;">
+          Ir a pagar $${monto.toLocaleString('es-MX')}
+        </a>
+
+        <button id="cerrarPago" style="margin-top:14px;background:none;border:none;color:#bbb;
+                text-decoration:underline;cursor:pointer;font-size:.9em;">
+          Pagar después
+        </button>
+      </div>`;
+
+    document.body.appendChild(capa);
+
+    capa.querySelector('#copiarMonto').onclick = function() {
+        const b = this;
+        navigator.clipboard.writeText(String(monto)).then(function() {
+            b.textContent = 'Monto copiado';
+            setTimeout(function(){ b.textContent = 'Copiar monto'; }, 2200);
+        }).catch(function() {
+            b.textContent = String(monto);
+        });
+    };
+    capa.querySelector('#cerrarPago').onclick = function() { capa.remove(); };
 }
 
 function getPaymentMethodName(method) {
@@ -391,7 +450,8 @@ function sendWhatsAppNotification(data) {
         `Nombre: ${data.fullName}\n` +
         `Boletos: ${data.quantity}\n` +
         `Total: $${data.total.toLocaleString('es-MX')} MXN\n` +
-        `Método: ${getPaymentMethodName(data.paymentMethod)}\n\n` +
+        `Método: ${getPaymentMethodName(data.paymentMethod)}\n` +
+        `Folio: ${data.id}\n\n` +
         `¡Gracias por apoyar la causa de Thiago! 💙`
     );
     
