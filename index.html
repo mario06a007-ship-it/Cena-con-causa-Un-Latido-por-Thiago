@@ -204,18 +204,29 @@
                         border: 1px solid rgba(233,166,60,.55); border-radius: 12px;
                         padding: 16px 20px; margin: 22px 0; text-align: center;">
                 <p style="margin:0; font-weight:bold; color:#ffd700; font-size:1.05em;">
-                    ¿Alguien te invitó a este evento?
+                    Ayúdanos a reconocer a quien te invitó
                 </p>
                 <p style="margin:6px 0 0; font-size:.92em; opacity:.85;">
-                    Escribe abajo su nombre o código para acreditarle tu reserva.
+                    Indica abajo quién te ofertó el boleto. Es la forma en que premiamos
+                    a quienes más apoyan la causa.
                 </p>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="promoCode">¿Quién te invitó? (opcional)</label>
-                    <input type="text" id="promoCode" placeholder="Nombre o código de quien te invitó"
-                           autocomplete="off" style="text-transform:uppercase;">
+                    <label for="promoCode">¿Quién te ofertó el boleto? *</label>
+                    <select id="promoCode" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="Maestra Cristal">Maestra Cristal</option>
+                        <option value="Maestra Consuelo">Maestra Consuelo</option>
+                        <option value="Emma Franco">Emma Franco</option>
+                        <option value="Alexander Pina">Alexander Piña</option>
+                        <option value="Thiago Soto">Thiago Soto</option>
+                        <option value="Venta directa">Nadie, llegué por mi cuenta</option>
+                        <option value="Otro">Otra persona</option>
+                    </select>
+                    <input type="text" id="vendedorOtro" placeholder="Escribe su nombre completo"
+                           autocomplete="off" style="display:none; margin-top:10px;">
                     <p id="promoMsg" style="margin-top:8px; font-size:.9em; display:none;"></p>
                 </div>
             </div>

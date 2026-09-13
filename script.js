@@ -191,7 +191,9 @@ function getFormData() {
         precioUnitario: precioPorPersona(),
         descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
         promoCodigo: vendedor || '',
-        promoTipo: vendedor ? 'Con vendedor' : 'Venta directa',
+        vendedorNombre: (vendedor || 'Venta directa').indexOf('Otro') === 0 ? 'Otro' : (vendedor || 'Venta directa'),
+        vendedorDetalle: vendedor || 'Venta directa',
+        promoTipo: 'Sin codigo',
         promoOtorga: '',
         date: new Date().toISOString(),
         dateFormatted: new Date().toLocaleDateString('es-MX'),
@@ -889,19 +891,31 @@ let promoActivo = null;
 let vendedor = '';
 
 function evaluarPromo() {
-    const campo = document.getElementById('promoCode');
-    const msg = document.getElementById('promoMsg');
-    if (!campo || !msg) { updateTotal(); return; }
+    const sel   = document.getElementById('promoCode');
+    const otro  = document.getElementById('vendedorOtro');
+    const msg   = document.getElementById('promoMsg');
+    if (!sel) { updateTotal(); return; }
 
-    const codigo = campo.value.trim().toUpperCase();
-    vendedor = codigo;
+    const elegido = sel.value;
 
-    if (!codigo) {
-        msg.style.display = 'none';
+    // "Otra persona" abre un campo para escribir el nombre
+    if (otro) otro.style.display = (elegido === 'Otro') ? 'block' : 'none';
+
+    if (elegido === 'Otro') {
+        const nom = (otro && otro.value.trim()) ? otro.value.trim() : '';
+        vendedor = nom ? ('Otro: ' + nom) : 'Otro';
     } else {
-        msg.style.display = 'block';
-        msg.style.color = '#7ee08a';
-        msg.textContent = 'Registrado: ' + codigo + '. Su venta quedará acreditada.';
+        vendedor = elegido;
+    }
+
+    if (msg) {
+        if (elegido && elegido !== 'Venta directa' && elegido !== '') {
+            msg.style.display = 'block';
+            msg.style.color = '#7ee08a';
+            msg.textContent = 'Gracias. Le acreditaremos esta venta.';
+        } else {
+            msg.style.display = 'none';
+        }
     }
     updateTotal();
 }
@@ -946,4 +960,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (z) z.addEventListener('change', function() {
         if (typeof evaluarPromo === 'function') evaluarPromo(); else updateTotal();
     });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const o = document.getElementById('vendedorOtro');
+    if (o) o.addEventListener('input', evaluarPromo);
 });
