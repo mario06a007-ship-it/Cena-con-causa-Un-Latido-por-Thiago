@@ -111,17 +111,7 @@ function updateTotal() {
 
     totalAmount.textContent = `$${t.neto.toLocaleString('es-MX')} ${CONFIG.currency}`;
 
-    if (detalle) {
-        if (t.descuento > 0) {
-            detalle.style.display = 'block';
-            detalle.innerHTML = `<s>$${t.bruto.toLocaleString('es-MX')}</s> &nbsp;·&nbsp; `
-                + (t.motivo === 'cortesia'
-                    ? `Cortesía de ${promoActivo.otorga}`
-                    : `Descuento de grupo aplicado · Ahorras $${t.descuento.toLocaleString('es-MX')}`);
-        } else {
-            detalle.style.display = 'none';
-        }
-    }
+    if (detalle) detalle.style.display = 'none';
 }
 
 // ========================================
@@ -200,15 +190,9 @@ function getFormData() {
         zona: CONFIG.zonas[zonaElegida()].nombre,
         precioUnitario: precioPorPersona(),
         descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
-        promoCodigo: promoActivo ? promoActivo.codigo : '',
-        promoTipo: (function() {
-            const c = parseInt(document.getElementById('quantity').value) || 0;
-            const t = calcularTotales(c);
-            if (t.motivo === 'cortesia') return 'Cortesia';
-            if (t.motivo === 'grupo') return 'Descuento de grupo';
-            return 'Sin codigo';
-        })(),
-        promoOtorga: (promoActivo && promoActivo.tipo === 'cortesia') ? promoActivo.otorga : '',
+        promoCodigo: vendedor || '',
+        promoTipo: vendedor ? 'Con vendedor' : 'Venta directa',
+        promoOtorga: '',
         date: new Date().toISOString(),
         dateFormatted: new Date().toLocaleDateString('es-MX'),
         status: 'Pendiente'
@@ -897,94 +881,28 @@ console.log('✅ Sistema de QR Tokenizado cargado correctamente');
 // Aunque alguien lea este archivo, no puede deducir el codigo.
 // La cortesia siempre queda sujeta a tu aprobacion en Notion.
 
-const PROMO = {
-    "0cbfb302": {
-        "tipo": "cortesia",
-        "otorga": "Maestra Cristal",
-        "desc": 100,
-        "min": 1
-    },
-    "b0536e37": {
-        "tipo": "cortesia",
-        "otorga": "Maestra Consuelo",
-        "desc": 100,
-        "min": 1
-    },
-    "28a4a749": {
-        "tipo": "cortesia",
-        "otorga": "Emma Franco",
-        "desc": 100,
-        "min": 1
-    },
-    "e554cf28": {
-        "tipo": "cortesia",
-        "otorga": "Alexander Pina",
-        "desc": 100,
-        "min": 1
-    },
-    "c448ed47": {
-        "tipo": "cortesia",
-        "otorga": "Thiago Soto",
-        "desc": 100,
-        "min": 1
-    },
-    "a235c0a5": {
-        "tipo": "grupo",
-        "otorga": "Descuento de grupo",
-        "desc": 15,
-        "min": 5
-    }
-};
 
-function huellaCodigo(s) {
-    let h = 5381;
-    for (let i = 0; i < s.length; i++) {
-        h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
-    }
-    return h.toString(16).padStart(8, '0');
-}
+
 
 // Estado del codigo aplicado en este momento
 let promoActivo = null;
+let vendedor = '';
 
 function evaluarPromo() {
     const campo = document.getElementById('promoCode');
     const msg = document.getElementById('promoMsg');
-    if (!campo || !msg) return;
+    if (!campo || !msg) { updateTotal(); return; }
 
     const codigo = campo.value.trim().toUpperCase();
-    promoActivo = null;
+    vendedor = codigo;
 
     if (!codigo) {
         msg.style.display = 'none';
-        updateTotal();
-        return;
+    } else {
+        msg.style.display = 'block';
+        msg.style.color = '#7ee08a';
+        msg.textContent = 'Registrado: ' + codigo + '. Su venta quedará acreditada.';
     }
-
-    const encontrado = PROMO[huellaCodigo(codigo)];
-    msg.style.display = 'block';
-
-    if (!encontrado) {
-        msg.style.color = '#ff8a8a';
-        msg.textContent = 'Ese código no es válido. Revísalo o déjalo vacío.';
-        updateTotal();
-        return;
-    }
-
-    const cantidad = parseInt(document.getElementById('quantity').value) || 0;
-
-    if (cantidad && cantidad < encontrado.min) {
-        msg.style.color = '#ffcc66';
-        msg.textContent = 'Este código aplica desde ' + encontrado.min + ' boletos.';
-        updateTotal();
-        return;
-    }
-
-    promoActivo = { codigo: codigo, ...encontrado };
-    msg.style.color = '#7ee08a';
-    msg.textContent = encontrado.tipo === 'cortesia'
-        ? 'Cortesía de ' + encontrado.otorga + '. Queda sujeta a confirmación.'
-        : 'Descuento de grupo aplicado: ' + encontrado.desc + '% menos.';
     updateTotal();
 }
 
@@ -1004,25 +922,12 @@ function precioPorPersona() {
     return esPrecioTardio() ? z.tardio : z.normal;
 }
 
-const GRUPO_MINIMO = 5;      // a partir de cuantos boletos aplica
-const GRUPO_PORCENTAJE = 15; // cuanto se descuenta
 
 function calcularTotales(cantidad) {
+    // Sin descuentos en la compra. Las recompensas se otorgan a quien vende,
+    // fuera de este formulario, segun el protocolo del evento.
     const unitario = precioPorPersona();
     const bruto = cantidad * unitario;
-
-    // 1. Una cortesia manda sobre todo lo demas
-    if (promoActivo && promoActivo.tipo === 'cortesia' && cantidad >= promoActivo.min) {
-        const d = Math.round(bruto * promoActivo.desc / 100);
-        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'cortesia', unitario: unitario };
-    }
-
-    // 2. Descuento de grupo: automatico, sin necesidad de codigo
-    if (cantidad >= GRUPO_MINIMO) {
-        const d = Math.round(bruto * GRUPO_PORCENTAJE / 100);
-        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'grupo', unitario: unitario };
-    }
-
     return { bruto: bruto, descuento: 0, neto: bruto, motivo: null, unitario: unitario };
 }
 
