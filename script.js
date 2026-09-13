@@ -4,7 +4,15 @@
 
 const CONFIG = {
     // Precios
-    ticketPrice: 900,
+    ticketPrice: 900,   // se conserva como respaldo; el precio real sale de ZONAS
+
+    // Precios por zona. 'normal' hasta el 20 de octubre, 'tardio' del 21 al 23.
+    zonas: {
+        oro:    { nombre: 'Oro',    normal: 1100, tardio: 1250, lugares: 50 },
+        plata:  { nombre: 'Plata',  normal: 1050, tardio: 1150, lugares: 30 },
+        bronce: { nombre: 'Bronce', normal:  900, tardio: 1000, lugares: 30 }
+    },
+    ultimoDiaPrecioNormal: '2026-10-20',
     currency: 'MXN',
     
     // Contacto
@@ -99,7 +107,7 @@ function updateTotal() {
 
     const t = (typeof calcularTotales === 'function')
         ? calcularTotales(quantity)
-        : { bruto: quantity * CONFIG.ticketPrice, descuento: 0, neto: quantity * CONFIG.ticketPrice };
+        : { bruto: quantity * precioPorPersona(), descuento: 0, neto: quantity * precioPorPersona() };
 
     totalAmount.textContent = `$${t.neto.toLocaleString('es-MX')} ${CONFIG.currency}`;
 
@@ -188,7 +196,9 @@ function getFormData() {
         paymentMethod: document.getElementById('paymentMethod').value,
         observations: document.getElementById('observations').value.trim(),
         total: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).neto,
-        totalOriginal: (parseInt(document.getElementById('quantity').value) || 0) * CONFIG.ticketPrice,
+        totalOriginal: (parseInt(document.getElementById('quantity').value) || 0) * precioPorPersona(),
+        zona: CONFIG.zonas[zonaElegida()].nombre,
+        precioUnitario: precioPorPersona(),
         descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
         promoCodigo: promoActivo ? promoActivo.codigo : '',
         promoTipo: (function() {
@@ -978,25 +988,42 @@ function evaluarPromo() {
     updateTotal();
 }
 
+function zonaElegida() {
+    const el = document.getElementById('zona');
+    const v = el ? el.value : 'bronce';
+    return CONFIG.zonas[v] ? v : 'bronce';
+}
+
+function esPrecioTardio() {
+    const corte = new Date(CONFIG.ultimoDiaPrecioNormal + 'T23:59:59-05:00');
+    return new Date() > corte;
+}
+
+function precioPorPersona() {
+    const z = CONFIG.zonas[zonaElegida()];
+    return esPrecioTardio() ? z.tardio : z.normal;
+}
+
 const GRUPO_MINIMO = 5;      // a partir de cuantos boletos aplica
 const GRUPO_PORCENTAJE = 15; // cuanto se descuenta
 
 function calcularTotales(cantidad) {
-    const bruto = cantidad * CONFIG.ticketPrice;
+    const unitario = precioPorPersona();
+    const bruto = cantidad * unitario;
 
     // 1. Una cortesia manda sobre todo lo demas
     if (promoActivo && promoActivo.tipo === 'cortesia' && cantidad >= promoActivo.min) {
         const d = Math.round(bruto * promoActivo.desc / 100);
-        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'cortesia' };
+        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'cortesia', unitario: unitario };
     }
 
     // 2. Descuento de grupo: automatico, sin necesidad de codigo
     if (cantidad >= GRUPO_MINIMO) {
         const d = Math.round(bruto * GRUPO_PORCENTAJE / 100);
-        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'grupo' };
+        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'grupo', unitario: unitario };
     }
 
-    return { bruto: bruto, descuento: 0, neto: bruto, motivo: null };
+    return { bruto: bruto, descuento: 0, neto: bruto, motivo: null, unitario: unitario };
 }
 
 
@@ -1006,4 +1033,12 @@ document.addEventListener('DOMContentLoaded', function() {
         campoPromo.addEventListener('input', evaluarPromo);
         campoPromo.addEventListener('blur', evaluarPromo);
     }
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const z = document.getElementById('zona');
+    if (z) z.addEventListener('change', function() {
+        if (typeof evaluarPromo === 'function') evaluarPromo(); else updateTotal();
+    });
 });
