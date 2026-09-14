@@ -31,7 +31,7 @@ const CONFIG = {
     eventName: 'Un Latido por Thiago',
     
     // Métodos de pago
-    mercadoPagoLink: 'https://mpago.la/32gk8zg',
+    mercadoPagoLink: 'https://link.mercadopago.com.mx/soto1lxt',
     bankTransfer: {
         bank: 'BBVA',
         account: '151 170 8950',
