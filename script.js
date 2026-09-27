@@ -44,6 +44,18 @@ const CONFIG = {
 // ESTADO GLOBAL
 // ========================================
 
+// ========================================
+// PROGRESO REAL DE VENTA
+// Se actualiza a mano porque la pagina no puede leer Notion.
+// Cambiar estos tres valores y publicar.
+// ========================================
+const PROGRESO = {
+    mostrar: false,        // ponlo en true cuando quieras que se vea en la pagina
+    boletosVendidos: 1,
+    totalRecaudado: 900,
+    meta: 110              // lugares totales del salon
+};
+
 let purchaseData = {
     localPurchases: [],
     totalTicketsSold: 0,
@@ -460,18 +472,22 @@ function sendWhatsAppNotification(data) {
 // ========================================
 
 function updateStats() {
+    const seccion = document.querySelector('.stats');
+    if (seccion) seccion.style.display = PROGRESO.mostrar ? '' : 'none';
+    if (!PROGRESO.mostrar) return;
+
     const ticketsDisplay = document.getElementById('ticketsSoldDisplay');
-    const totalDisplay = document.getElementById('totalRaisedDisplay');
-    
-    if (ticketsDisplay) {
-        ticketsDisplay.textContent = purchaseData.totalTicketsSold;
+    const totalDisplay   = document.getElementById('totalRaisedDisplay');
+    const barra          = document.getElementById('barraProgreso');
+
+    if (ticketsDisplay) ticketsDisplay.textContent = PROGRESO.boletosVendidos;
+    if (totalDisplay)   totalDisplay.textContent = '$' + PROGRESO.totalRecaudado.toLocaleString('es-MX');
+    if (barra) {
+        const pct = Math.min(100, Math.round(PROGRESO.boletosVendidos / PROGRESO.meta * 100));
+        barra.style.width = pct + '%';
+        const etiqueta = document.getElementById('textoProgreso');
+        if (etiqueta) etiqueta.textContent = PROGRESO.boletosVendidos + ' de ' + PROGRESO.meta + ' lugares ocupados';
     }
-    
-    if (totalDisplay) {
-        totalDisplay.textContent = `$${purchaseData.totalRaised.toLocaleString('es-MX')}`;
-    }
-    
-    console.log('📊 Estadísticas actualizadas');
 }
 
 // ========================================
