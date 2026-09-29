@@ -8,9 +8,9 @@ const CONFIG = {
 
     // Precios por zona. 'normal' hasta el 20 de octubre, 'tardio' del 21 al 23.
     zonas: {
-        oro:    { nombre: 'Oro',    normal: 1100, tardio: 1250, lugares: 50 },
-        plata:  { nombre: 'Plata',  normal: 1050, tardio: 1150, lugares: 30 },
-        bronce: { nombre: 'Bronce', normal:  900, tardio: 1000, lugares: 30 }
+        oro:    { nombre: 'Oro',    normal: 1100, tardio: 1250, lugares: 50, ocupados: 0 },
+        plata:  { nombre: 'Plata',  normal: 1050, tardio: 1150, lugares: 30, ocupados: 0 },
+        bronce: { nombre: 'Bronce', normal:  900, tardio: 1000, lugares: 30, ocupados: 1 }
     },
     ultimoDiaPrecioNormal: '2026-10-20',
     currency: 'MXN',
@@ -107,6 +107,7 @@ function setupFormListeners() {
 // ========================================
 
 function updateTotal() {
+    if (typeof evaluarCupo === 'function') evaluarCupo();
     const quantity = parseInt(document.getElementById('quantity').value) || 0;
     const totalAmount = document.getElementById('totalAmount');
     const detalle = document.getElementById('promoDetalle');
@@ -196,10 +197,18 @@ function getFormData() {
         phone: document.getElementById('phone').value.trim(),
         quantity: parseInt(document.getElementById('quantity').value),
         paymentMethod: document.getElementById('paymentMethod').value,
-        observations: document.getElementById('observations').value.trim(),
+        observations: (function() {
+            const c = parseInt(document.getElementById('quantity').value) || 0;
+            const r = repartirCupo(zonaElegida(), c);
+            const nota = document.getElementById('observations').value.trim();
+            return r.enEspera > 0
+                ? '*** LISTA DE ESPERA: ' + r.enEspera + ' de ' + c + ' boletos *** ' + nota
+                : nota;
+        })(),
         total: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).neto,
         totalOriginal: (parseInt(document.getElementById('quantity').value) || 0) * precioPorPersona(),
         zona: CONFIG.zonas[zonaElegida()].nombre,
+        enEspera: repartirCupo(zonaElegida(), parseInt(document.getElementById('quantity').value) || 0).enEspera,
         precioUnitario: precioPorPersona(),
         descuento: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).descuento,
         promoCodigo: vendedor || '',
@@ -362,6 +371,23 @@ async function sendToNotion(data) {
 // ========================================
 
 function showConfirmation(data) {
+    // Si hay boletos en lista de espera, NO se pide pago todavia
+    if (data.enEspera && data.enEspera > 0) {
+        alert(
+            'RESERVA RECIBIDA - LISTA DE ESPERA\n\n' +
+            data.fullName + '\n' +
+            'Zona ' + data.zona + ' · ' + data.quantity + ' boleto(s)\n' +
+            data.enEspera + ' de ellos quedan en lista de espera.\n' +
+            'Folio: ' + data.id + '\n\n' +
+            'POR FAVOR NO REALICES NINGUN PAGO TODAVIA.\n' +
+            'Te contactaremos por WhatsApp para confirmarte si se liberan lugares ' +
+            'o para ofrecerte otra zona.\n\n' +
+            'Gracias por tu paciencia y por apoyar a Thiago.'
+        );
+        sendWhatsAppNotification(data);
+        return;
+    }
+
     const digital = (data.paymentMethod === 'tarjeta' || data.paymentMethod === 'mercadopago');
 
     if (digital && data.total > 0) {
@@ -947,6 +973,56 @@ function esPrecioTardio() {
     return new Date() > corte;
 }
 
+function lugaresLibres(clave) {
+    const z = CONFIG.zonas[clave];
+    return Math.max(0, z.lugares - z.ocupados);
+}
+
+// Devuelve cuantos de los boletos pedidos caben y cuantos van a lista de espera
+function repartirCupo(clave, cantidad) {
+    const libres = lugaresLibres(clave);
+    if (cantidad <= libres) return { confirmados: cantidad, enEspera: 0, libres: libres };
+    return { confirmados: libres, enEspera: cantidad - libres, libres: libres };
+}
+
+function evaluarCupo() {
+    const aviso = document.getElementById('avisoCupo');
+    if (!aviso) return { enEspera: 0 };
+
+    const clave = zonaElegida();
+    const cantidad = parseInt(document.getElementById('quantity').value) || 0;
+    if (!cantidad) { aviso.style.display = 'none'; return { enEspera: 0 }; }
+
+    const r = repartirCupo(clave, cantidad);
+    const z = CONFIG.zonas[clave];
+
+    if (r.enEspera === 0) {
+        if (r.libres - cantidad <= 6) {
+            aviso.style.display = 'block';
+            aviso.style.background = 'rgba(233,166,60,.18)';
+            aviso.style.borderLeft = '4px solid #e9a63c';
+            aviso.style.color = '#ffd700';
+            aviso.innerHTML = 'Quedan pocos lugares en Zona ' + z.nombre +
+                ': <strong>' + (r.libres - cantidad) + '</strong> después de tu reserva.';
+        } else {
+            aviso.style.display = 'none';
+        }
+    } else {
+        aviso.style.display = 'block';
+        aviso.style.background = 'rgba(212,20,90,.20)';
+        aviso.style.borderLeft = '4px solid #d4145a';
+        aviso.style.color = '#ffd2e0';
+        aviso.innerHTML = r.libres === 0
+            ? '<strong>Zona ' + z.nombre + ' está llena.</strong><br>' +
+              'Puedes reservar de todos modos: entras a lista de espera y te confirmamos ' +
+              'tu lugar por WhatsApp. <strong>No pagues todavía</strong>, espera nuestra confirmación.'
+            : '<strong>Solo quedan ' + r.libres + ' lugares en Zona ' + z.nombre + '.</strong><br>' +
+              'Los otros ' + r.enEspera + ' entran a lista de espera y te los confirmamos por WhatsApp. ' +
+              '<strong>No pagues todavía</strong>, espera nuestra confirmación.';
+    }
+    return r;
+}
+
 function precioPorPersona() {
     const z = CONFIG.zonas[zonaElegida()];
     return esPrecioTardio() ? z.tardio : z.normal;
@@ -982,4 +1058,20 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const o = document.getElementById('vendedorOtro');
     if (o) o.addEventListener('input', evaluarPromo);
+});
+
+
+// Muestra en el selector cuantos lugares quedan por zona
+document.addEventListener('DOMContentLoaded', function() {
+    const sel = document.getElementById('zona');
+    if (!sel) return;
+    Array.prototype.forEach.call(sel.options, function(op) {
+        const z = CONFIG.zonas[op.value];
+        if (!z) return;
+        const libres = lugaresLibres(op.value);
+        const precio = esPrecioTardio() ? z.tardio : z.normal;
+        op.textContent = 'Zona ' + z.nombre + ' — $' + precio.toLocaleString('es-MX') +
+            ' — ' + (libres === 0 ? 'LLENA (lista de espera)' : libres + ' lugares disponibles');
+    });
+    evaluarCupo();
 });
