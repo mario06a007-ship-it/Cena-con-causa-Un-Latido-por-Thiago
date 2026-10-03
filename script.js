@@ -8,7 +8,7 @@ const CONFIG = {
 
     // Precios por zona. 'normal' hasta el 20 de octubre, 'tardio' del 21 al 23.
     zonas: {
-        oro:    { nombre: 'Oro',    normal: 1100, tardio: 1250, lugares: 50, ocupados: 0 },
+        oro:    { nombre: 'Oro',    normal: 1100, tardio: 1250, lugares: 50, ocupados: 2 },
         plata:  { nombre: 'Plata',  normal: 1050, tardio: 1150, lugares: 30, ocupados: 1 },
         bronce: { nombre: 'Bronce', normal:  900, tardio: 1000, lugares: 30, ocupados: 3 }
     },
@@ -51,8 +51,8 @@ const CONFIG = {
 // ========================================
 const PROGRESO = {
     mostrar: false,        // ponlo en true cuando quieras que se vea en la pagina
-    boletosVendidos: 4,
-    totalRecaudado: 3750,
+    boletosVendidos: 6,
+    totalRecaudado: 5950,
     meta: 110              // lugares totales del salon
 };
 
