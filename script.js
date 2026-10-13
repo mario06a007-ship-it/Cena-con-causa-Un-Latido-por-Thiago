@@ -114,7 +114,17 @@ function updateTotal() {
 
     if (!quantity) {
         totalAmount.textContent = '$0.00';
-        if (detalle) detalle.style.display = 'none';
+        if (detalle) {
+        if (t.descuento > 0) {
+            detalle.style.display = 'block';
+            detalle.innerHTML = '<s>$' + t.bruto.toLocaleString('es-MX') + '</s> &nbsp;·&nbsp; ' +
+                (cuponActivo && cuponActivo.pct === 100
+                    ? 'Cortesía aplicada'
+                    : 'Ahorras $' + t.descuento.toLocaleString('es-MX'));
+        } else {
+            detalle.style.display = 'none';
+        }
+    }
         return;
     }
 
@@ -124,7 +134,17 @@ function updateTotal() {
 
     totalAmount.textContent = `$${t.neto.toLocaleString('es-MX')} ${CONFIG.currency}`;
 
-    if (detalle) detalle.style.display = 'none';
+    if (detalle) {
+        if (t.descuento > 0) {
+            detalle.style.display = 'block';
+            detalle.innerHTML = '<s>$' + t.bruto.toLocaleString('es-MX') + '</s> &nbsp;·&nbsp; ' +
+                (cuponActivo && cuponActivo.pct === 100
+                    ? 'Cortesía aplicada'
+                    : 'Ahorras $' + t.descuento.toLocaleString('es-MX'));
+        } else {
+            detalle.style.display = 'none';
+        }
+    }
 }
 
 // ========================================
@@ -201,9 +221,11 @@ function getFormData() {
             const c = parseInt(document.getElementById('quantity').value) || 0;
             const r = repartirCupo(zonaElegida(), c);
             const nota = document.getElementById('observations').value.trim();
+            const cup = (typeof cuponActivo !== 'undefined' && cuponActivo)
+                ? '[CUPON ' + cuponActivo.codigo + ' = ' + cuponActivo.pct + '%] ' : '';
             return r.enEspera > 0
-                ? '*** LISTA DE ESPERA: ' + r.enEspera + ' de ' + c + ' boletos *** ' + nota
-                : nota;
+                ? cup + '*** LISTA DE ESPERA: ' + r.enEspera + ' de ' + c + ' boletos *** ' + nota
+                : cup + nota;
         })(),
         total: calcularTotales(parseInt(document.getElementById('quantity').value) || 0).neto,
         totalOriginal: (parseInt(document.getElementById('quantity').value) || 0) * precioPorPersona(),
@@ -473,7 +495,8 @@ function getPaymentMethodName(method) {
         'mercadopago': 'Mercado Pago',
         'transferencia': 'Transferencia bancaria',
         'deposito': 'Depósito bancario',
-        'efectivo': 'Efectivo'
+        'efectivo': 'Efectivo',
+        'cupon': 'Cupon de cortesia'
     };
     return methods[method] || method;
 }
@@ -1030,10 +1053,12 @@ function precioPorPersona() {
 
 
 function calcularTotales(cantidad) {
-    // Sin descuentos en la compra. Las recompensas se otorgan a quien vende,
-    // fuera de este formulario, segun el protocolo del evento.
     const unitario = precioPorPersona();
     const bruto = cantidad * unitario;
+    if (typeof cuponActivo !== 'undefined' && cuponActivo) {
+        const d = Math.round(bruto * cuponActivo.pct / 100);
+        return { bruto: bruto, descuento: d, neto: bruto - d, motivo: 'cupon', unitario: unitario };
+    }
     return { bruto: bruto, descuento: 0, neto: bruto, motivo: null, unitario: unitario };
 }
 
@@ -1074,4 +1099,137 @@ document.addEventListener('DOMContentLoaded', function() {
             ' — ' + (libres === 0 ? 'LLENA (lista de espera)' : libres + ' lugares disponibles');
     });
     evaluarCupo();
+});
+
+
+// ========================================
+// CUPONES DE DESCUENTO (premios a vendedores)
+// Guardados como huella: no se pueden deducir leyendo este archivo.
+// Un solo uso: lo controla Mayito antes de confirmar la reserva.
+// ========================================
+const CUPONES = {
+    "2ee40a39": {
+        "pct": 20
+    },
+    "2f05b64d": {
+        "pct": 20
+    },
+    "30be3c8f": {
+        "pct": 20
+    },
+    "3295326c": {
+        "pct": 20
+    },
+    "300400f7": {
+        "pct": 20
+    },
+    "32c73acc": {
+        "pct": 20
+    },
+    "32f22ae3": {
+        "pct": 20
+    },
+    "2ea5d1de": {
+        "pct": 20
+    },
+    "30cc3fb0": {
+        "pct": 20
+    },
+    "2f818576": {
+        "pct": 20
+    },
+    "2f04c94a": {
+        "pct": 20
+    },
+    "308303c4": {
+        "pct": 20
+    },
+    "ee07dd52": {
+        "pct": 50
+    },
+    "ebaf94ad": {
+        "pct": 50
+    },
+    "eace0fcf": {
+        "pct": 50
+    },
+    "ebaddd47": {
+        "pct": 50
+    },
+    "ec299576": {
+        "pct": 50
+    },
+    "ea68716d": {
+        "pct": 50
+    },
+    "ebf422ef": {
+        "pct": 50
+    },
+    "ec009ac4": {
+        "pct": 50
+    },
+    "b5199ff7": {
+        "pct": 100
+    },
+    "b51cf257": {
+        "pct": 100
+    },
+    "b5adf9eb": {
+        "pct": 100
+    },
+    "bba02e12": {
+        "pct": 100
+    },
+    "b56790f0": {
+        "pct": 100
+    },
+    "b56d6ceb": {
+        "pct": 100
+    },
+    "b51d4dfc": {
+        "pct": 100
+    },
+    "b6abd7f7": {
+        "pct": 100
+    }
+};
+
+function huellaCupon(s) {
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+    return h.toString(16).padStart(8, '0');
+}
+
+let cuponActivo = null;
+
+function evaluarCupon() {
+    const campo = document.getElementById('cupon');
+    const msg   = document.getElementById('cuponMsg');
+    if (!campo || !msg) return;
+
+    const codigo = campo.value.trim().toUpperCase();
+    cuponActivo = null;
+
+    if (!codigo) { msg.style.display = 'none'; updateTotal(); return; }
+
+    const hallado = CUPONES[huellaCupon(codigo)];
+    msg.style.display = 'block';
+
+    if (!hallado) {
+        msg.style.color = '#ff8a8a';
+        msg.textContent = 'Ese cupón no es válido. Revísalo o déjalo vacío.';
+    } else {
+        cuponActivo = { codigo: codigo, pct: hallado.pct };
+        msg.style.color = '#7ee08a';
+        msg.textContent = hallado.pct === 100
+            ? 'Cortesía aplicada. Tu reserva queda sujeta a confirmación.'
+            : 'Cupón aplicado: ' + hallado.pct + '% de descuento.';
+    }
+    updateTotal();
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const c = document.getElementById('cupon');
+    if (c) { c.addEventListener('input', evaluarCupon); c.addEventListener('blur', evaluarCupon); }
 });
