@@ -50,7 +50,7 @@ const CONFIG = {
 // Cambiar estos tres valores y publicar.
 // ========================================
 const PROGRESO = {
-    mostrar: false,        // ponlo en true cuando quieras que se vea en la pagina
+    mostrar: true,        // ponlo en true cuando quieras que se vea en la pagina
     boletosVendidos: 17,
     totalRecaudado: 15650,
     meta: 110              // lugares totales del salon
