@@ -12,7 +12,7 @@ const CONFIG = {
         plata:  { nombre: 'Plata',  normal: 1050, tardio: 1150, lugares: 30, ocupados: 1 },
         bronce: { nombre: 'Bronce', normal:  900, tardio: 1000, lugares: 30, ocupados: 4 }
     },
-    ultimoDiaPrecioNormal: '2026-10-20',
+    ultimoDiaPrecioNormal: '2026-10-23',
     currency: 'MXN',
     
     // Contacto
